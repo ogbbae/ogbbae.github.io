@@ -1,1 +1,77 @@
-привет
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase Auth: Google & GitHub</title>
+  <style>
+    body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f4f4f9; }
+    button { margin: 10px; padding: 12px 24px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; color: white; transition: background 0.3s; }
+    #google-btn { background-color: #4285F4; }
+    #google-btn:hover { background-color: #357ae8; }
+    #github-btn { background-color: #333; }
+    #github-btn:hover { background-color: #444; }
+    #user-info { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h2>Вход в приложение</h2>
+  <button id="google-btn">Войти через Google</button>
+  <button id="github-btn">Войти через GitHub</button>
+  <div id="user-info"></div>
+
+  <script type="module">
+    // Импортируем нужные функции из Firebase SDK
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    // Конфигурация вашего проекта ogbbae
+  const firebaseConfig = {
+    apiKey: "AIzaSyAp6yezPNM4rb03aHMcGN-NfU1qJr_5vzs",
+    authDomain: "ogbbae.firebaseapp.com",
+    databaseURL: "https://ogbbae-default-rtdb.firebaseio.com",
+    projectId: "ogbbae",
+    storageBucket: "ogbbae.firebasestorage.app",
+    messagingSenderId: "27338517722",
+    appId: "1:27338517722:web:1d6e52eff99676cacfc9e3",
+    measurementId: "G-YYTFDZV42K"
+  };
+
+    // Инициализация Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const userInfoDiv = document.getElementById('user-info');
+
+    // Авторизация через Google
+    document.getElementById('google-btn').addEventListener('click', () => {
+      const provider = new GoogleAuthProvider();
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          const user = result.user;
+          userInfoDiv.textContent = `Привет, ${user.displayName} (Google)!`;
+          console.log("Успешный вход:", user);
+        })
+        .catch((error) => {
+          userInfoDiv.textContent = `Ошибка: ${error.message}`;
+          console.error("Ошибка Google Auth:", error);
+        });
+    });
+
+    // Авторизация через GitHub
+    document.getElementById('github-btn').addEventListener('click', () => {
+      const provider = new GithubAuthProvider();
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          const user = result.user;
+          userInfoDiv.textContent = `Привет, ${user.displayName || user.email} (GitHub)!`;
+          console.log("Успешный вход:", user);
+        })
+        .catch((error) => {
+          userInfoDiv.textContent = `Ошибка: ${error.message}`;
+          console.error("Ошибка GitHub Auth:", error);
+        });
+    });
+  </script>
+</body>
+</html>
