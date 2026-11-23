@@ -15,7 +15,13 @@
   </style>
 </head>
 <body>
+ <div id="db-section" style="display: none;">
+    <input type="text" id="db-input" placeholder="Напиши что-нибудь...">
+    <button id="db-write-btn">Сохранить в БД</button>
+    <p id="db-display" style="color: white; font-weight: bold; margin-top: 15px; text-shadow: 1px 1px 5px rgba(0,0,0,0.3);"></p>
+  </div>
 
+  
   <h2>Вход в приложение</h2>
   <button id="google-btn">Войти через Google</button>
   <button id="github-btn">Войти через GitHub</button>
@@ -25,7 +31,7 @@
     // Импортируем нужные функции из Firebase SDK
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
+  const dbWriteBtn = document.getElementById("db-write-btn");
     // Конфигурация вашего проекта ogbbae
   const firebaseConfig = {
     apiKey: "AIzaSyAp6yezPNM4rb03aHMcGN-NfU1qJr_5vzs",
@@ -58,6 +64,17 @@
         });
     });
 
+    dbWriteBtn.addEventListener("click", () => {
+      const user = auth.currentUser;
+      if (user && dbInput.value.trim() !== "") {
+        set(ref(db, 'something/' + user.uid), {
+          message: dbInput.value,
+          updatedAt: Date.now()
+        }).then(() => {
+          dbInput.value = "";
+        }).catch(err => console.error("Ошибка записи:", err));
+      }
+    });
     // Авторизация через GitHub
     document.getElementById('github-btn').addEventListener('click', () => {
       const provider = new GithubAuthProvider();
